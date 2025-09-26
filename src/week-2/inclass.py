@@ -4,7 +4,7 @@ def count_vowels(s):
 
     try:
         for c in s:
-            if c in vowels:
+            if c.lower() in vowels:
                 count += 1
 
         return count
@@ -14,7 +14,6 @@ def count_vowels(s):
 
 
 def reverse_words(s):
-    print("original string: ", s)
     words_reverse = ""
 
     try:
@@ -23,7 +22,9 @@ def reverse_words(s):
         for i in range(len(words) - 1, -1, -1):
             words_reverse = words_reverse + words[i] + " "
 
-        return words_reverse.strip()
+        words_reverse_result = words_reverse.strip()
+
+        return words_reverse_result
     except AttributeError:
         print("Invalid value passed to reverse_words")
         return None
@@ -31,27 +32,45 @@ def reverse_words(s):
 
 def is_palindrome(s):
     try:
-        for forward_index in range(len(s)):
-            backward_index = len(s) - forward_index - 1
+        s_formatted = "".join(s.split())
+
+        for forward_index in range(len(s_formatted)):
+            backward_index = len(s_formatted) - forward_index - 1
 
             if forward_index == backward_index:
                 break
 
-            if s[forward_index].lower() != s[backward_index].lower():
+            if (
+                s_formatted[forward_index].lower()
+                != s_formatted[backward_index].lower()
+            ):
                 return False
 
         return True
-    except TypeError:
-        print("Invalid value passed to is_palindrome")
+    except AttributeError:
+        print("Invalid non-string value passed to is_palindrome")
         return False
 
 
 if __name__ == "__main__":
-    pass
-    # vowel_count = count_vowels(12.3333)
-    # print("vowel_count: ", vowel_count)
+    while True:
+        print("\n\n======== Welcome! ========")
+        user_input = input("Enter a text string, or 'q' to quit: ")
 
-    # reverse_words(12)
+        if user_input == "q":
+            break
+        elif user_input.strip() == "":
+            print("Please enter a valid input.")
 
-    # foo = is_palindrom(1)
-    # print("foo: ", foo)
+        vowels = count_vowels(user_input)
+        user_input_reverse = reverse_words(user_input)
+        is_user_input_palindrome = is_palindrome(user_input)
+
+        print("\n\n======== RESULTS ========")
+        print("Text provided:", user_input)
+        print("\nVowel count:", vowels)
+        print("Words in reverse order:", user_input_reverse)
+        print("Is it a palindrome:", is_user_input_palindrome)
+
+    print("\nQuitting program...")
+    print("Goodbye!\n")
