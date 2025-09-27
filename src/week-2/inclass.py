@@ -37,7 +37,7 @@ def is_palindrome(s):
         for forward_index in range(len(s_formatted)):
             backward_index = len(s_formatted) - forward_index - 1
 
-            if forward_index == backward_index:
+            if forward_index >= backward_index:
                 break
 
             if (
