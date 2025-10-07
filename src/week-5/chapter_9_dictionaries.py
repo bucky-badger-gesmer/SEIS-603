@@ -28,7 +28,3 @@ highest_value = max(value_list)
 for email_key in email_dictionary:
     if email_dictionary[email_key] == highest_value:
         print(f"{email_key} {email_dictionary[email_key]}")
-
-
-stuff = dict()
-print(stuff.get("candy", "poopy poop"))
