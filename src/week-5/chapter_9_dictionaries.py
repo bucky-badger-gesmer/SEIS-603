@@ -2,7 +2,7 @@ name = input("Enter file: ")
 
 try:
     fh = open(name)
-except:
+except FileNotFoundError:
     print("File not found: ", name)
     exit()
 
