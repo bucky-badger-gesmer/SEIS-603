@@ -15,7 +15,6 @@ def exercise_1():
         exit()
 
     host_from_input = url_input_strip.split("/")[2]
-    print("host_from_input", host_from_input)
 
     mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     mysocket.connect((host_from_input, 80))
@@ -45,7 +44,6 @@ def exercise_2():
         exit()
 
     host_from_input = url_input_strip.split("/")[2]
-    print("host_from_input", host_from_input)
 
     mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     mysocket.connect((host_from_input, 80))
@@ -71,9 +69,9 @@ def exercise_2():
         if count >= 3000:
             break
 
-    print("======== RESULTS ========")
     print(data_doc_first_3000)
-    print("Total number of characters in document:", len(data_doc))
+    print("\n======== RESULTS ========")
+    print(f"Total number of characters in document: {len(data_doc)}\n")
 
     mysocket.close()
 
