@@ -54,16 +54,26 @@ def exercise_2():
     mysocket.send(request_str.encode())
 
     data = mysocket.recv(512)
+    data_doc = ""
 
     while len(data) > 1:
-        print("starting...")
-        data_decoded = data.decode()
-        data_decoded_split = data_decoded.split("\n")
-        print("poop", data_decoded_split)
-
-        # print(data.decode())
-        print("ending...")
+        data_doc += data.decode()
         data = mysocket.recv(512)
+
+    data_doc_first_3000 = ""
+    count = 0
+
+    # it's entirely possible that the doc could be less than 3000 characters!
+    for char in data_doc:
+        if re.match(r"\S", char):
+            count += 1
+        data_doc_first_3000 += char
+        if count >= 3000:
+            break
+
+    print("======== RESULTS ========")
+    print(data_doc_first_3000)
+    print("Total number of characters in document:", len(data_doc))
 
     mysocket.close()
 
