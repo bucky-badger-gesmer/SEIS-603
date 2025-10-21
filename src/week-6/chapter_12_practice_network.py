@@ -90,21 +90,22 @@ def exercise_3():
         exit()
 
     first_3000_chars = ""
-    total_non_whitespace = 0
+    char_count = 0
 
     for line in fh:
         decoded_line = line.decode()
-        total_non_whitespace += len(re.findall(r"\S", decoded_line))
+        chars_in_decoded_line = re.findall(r"\S", decoded_line)
 
+        char_count += len(chars_in_decoded_line)
+
+        # add decoded line until we reach first 3000 characters
         if len(first_3000_chars) < 3000:
-            needed = 3000 - len(first_3000_chars)
-            first_3000_chars += decoded_line[:needed]
+            remaining_chars_until_3000 = 3000 - len(first_3000_chars)
+            first_3000_chars += decoded_line[:remaining_chars_until_3000]
 
     print(first_3000_chars)
     print("\n======== RESULTS ========")
-    print(
-        f"\nTotal number of non-whitespace characters in document: {total_non_whitespace}"
-    )
+    print(f"Total number of characters in document: {char_count}\n")
 
 
 def validate_url(url_str):
@@ -120,6 +121,7 @@ def validate_url(url_str):
 
 
 if __name__ == "__main__":
+    # uncomment each functions to test each exercise
     exercise_1()
     # exercise_2()
     # exercise_3()
