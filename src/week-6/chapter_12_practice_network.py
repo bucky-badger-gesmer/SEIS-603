@@ -1,5 +1,6 @@
 import re
 import socket
+import urllib.request
 
 
 def exercise_1():
@@ -76,6 +77,36 @@ def exercise_2():
     mysocket.close()
 
 
+def exercise_3():
+    url_input = input("Enter a url: ")
+    url_input_strip = url_input.strip()
+
+    try:
+        fh = urllib.request.urlopen(url_input_strip)
+    except ValueError:
+        print(
+            f"Invalid URL: {url_input_strip}; enter a valid url, like http://data.pr4e.org/mbox-short.txt"
+        )
+        exit()
+
+    first_3000_chars = ""
+    total_non_whitespace = 0
+
+    for line in fh:
+        decoded_line = line.decode()
+        total_non_whitespace += len(re.findall(r"\S", decoded_line))
+
+        if len(first_3000_chars) < 3000:
+            needed = 3000 - len(first_3000_chars)
+            first_3000_chars += decoded_line[:needed]
+
+    print(first_3000_chars)
+    print("\n======== RESULTS ========")
+    print(
+        f"\nTotal number of non-whitespace characters in document: {total_non_whitespace}"
+    )
+
+
 def validate_url(url_str):
     is_valid = bool(
         re.match(
@@ -91,3 +122,4 @@ def validate_url(url_str):
 if __name__ == "__main__":
     # exercise_1()
     exercise_2()
+    # exercise_3()
