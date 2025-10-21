@@ -120,6 +120,6 @@ def validate_url(url_str):
 
 
 if __name__ == "__main__":
-    # exercise_1()
-    exercise_2()
+    exercise_1()
+    # exercise_2()
     # exercise_3()
