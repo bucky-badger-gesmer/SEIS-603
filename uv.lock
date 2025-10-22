@@ -163,6 +163,15 @@ wheels = [
 ]
 
 [[package]]
+name = "elementpath"
+version = "5.0.4"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e7/bc/ccadb197f8ed565c0e39f5ee4302ffe96c81abb1f20a0979798a6271b668/elementpath-5.0.4.tar.gz", hash = "sha256:85ed93565d6e94aefa160b12f36b12cbe4be6bf9bbde06b80f2c5c94829a25fb", size = 365851, upload-time = "2025-08-16T18:19:55.717Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a9/b6/f85666707b9f9ff94ada851cbaa6f1c91a0f5802aa5e498772251e1e7772/elementpath-5.0.4-py3-none-any.whl", hash = "sha256:75d6f31c614d57e50eb749fc50806e3102880cd1f6552da3f2265f8eb8d3bbc6", size = 245512, upload-time = "2025-08-16T18:19:52.903Z" },
+]
+
+[[package]]
 name = "executing"
 version = "2.2.1"
 source = { registry = "https://pypi.org/simple" }
@@ -592,6 +601,7 @@ dependencies = [
     { name = "rich" },
     { name = "ruff" },
     { name = "ty" },
+    { name = "xmlschema" },
 ]
 
 [package.metadata]
@@ -603,6 +613,7 @@ requires-dist = [
     { name = "rich", specifier = ">=14.0.0" },
     { name = "ruff", specifier = ">=0.12.3" },
     { name = "ty", specifier = ">=0.0.1a14" },
+    { name = "xmlschema", specifier = ">=4.2.0" },
 ]
 
 [[package]]
@@ -715,4 +726,16 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/24/30/6b0809f4510673dc723187aeaf24c7f5459922d01e2f794277a3dfb90345/wcwidth-0.2.14.tar.gz", hash = "sha256:4d478375d31bc5395a3c55c40ccdf3354688364cd61c4f6adacaa9215d0b3605", size = 102293, upload-time = "2025-09-22T16:29:53.023Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/af/b5/123f13c975e9f27ab9c0770f514345bd406d0e8d3b7a0723af9d43f710af/wcwidth-0.2.14-py2.py3-none-any.whl", hash = "sha256:a7bb560c8aee30f9957e5f9895805edd20602f2d7f720186dfd906e82b4982e1", size = 37286, upload-time = "2025-09-22T16:29:51.641Z" },
+]
+
+[[package]]
+name = "xmlschema"
+version = "4.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "elementpath" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/84/f8/33b43a53503d0892e7555d16c593cf001d5aaa5b0ad7d53c68098235805b/xmlschema-4.2.0.tar.gz", hash = "sha256:b1f88c53493b2e75471977cbf218d939b872d0c7046bb63d48cc219fa7e241b9", size = 643756, upload-time = "2025-10-14T09:19:32.253Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/dc/1a/81ac398d35be848f3655893b6260f227b29ca6acf5c2674dc5ed9af63027/xmlschema-4.2.0-py3-none-any.whl", hash = "sha256:82d24a50eea5e7f2d603312813848cd66fddf8fa2b6730839c6aa3d66312e3b6", size = 467246, upload-time = "2025-10-14T09:19:28.359Z" },
 ]

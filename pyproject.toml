@@ -12,6 +12,7 @@ dependencies = [
     "rich>=14.0.0",
     "ruff>=0.12.3",
     "ty>=0.0.1a14",
+    "xmlschema>=4.2.0",
 ]
 
 [tool.ruff]
