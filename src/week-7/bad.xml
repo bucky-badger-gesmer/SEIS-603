@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vehicle xmlns="http://example.com/vehicle"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://example.com/vehicle vehicle.xsd"
+         type="car">
+  <make>Honda</make>
+  <model>Civic</model>
+  <year>NineteenHundredTwentyFour</year>
+</vehicle>
