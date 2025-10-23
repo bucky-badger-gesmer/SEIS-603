@@ -5,8 +5,19 @@ Author: Study Guide Example
 Date: 2025
 """
 
+"""
+TEST NOTES:
+- Needed to import urllib.error
+- Adjust append_to_file function to append instead of write
+- Adjust create_person_tuple to return a tuple instead of a list
+- merge_dictionaries needed to have the merged dictionary be a new dictionary, and then loop through both dict1 and dict2
+- extract_phone_numbers needed the regex to be adjusted, last 4 numbers were only 3
+"""
+
+
 import json
 import re
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -47,7 +58,7 @@ def append_to_file(filename, new_data):
     """
     Append new data to an existing file using 'a' mode.
     """
-    with open(filename, "w") as file_handle:
+    with open(filename, "a") as file_handle:
         file_handle.write(new_data + "\n")
     print(f"Data appended to '{filename}'")
 
@@ -191,7 +202,7 @@ def create_person_tuple(name, age, job):
     Creates a person tuple from individual values.
     Returns tuple in format (name, age, job).
     """
-    person = [name, age, job]
+    person = (name, age, job)
     return person
 
 
@@ -287,9 +298,14 @@ def merge_dictionaries(dict1, dict2):
     Merges two dictionaries. If keys overlap, dict2 values should overwrite dict1.
     Returns a new merged dictionary.
     """
-    merged = dict1
+    merged = {}
+
+    for key, value in dict1.items():
+        merged[key] = value
+
     for key, value in dict2.items():
         merged[key] = value
+
     return merged
 
 
@@ -375,7 +391,7 @@ def extract_phone_numbers(text):
     Extracts all phone numbers in format XXX-XXX-XXXX from text.
     Returns list of phone numbers found.
     """
-    pattern = r"\d{3}-\d{3}-\d{3}"
+    pattern = r"\d{3}-\d{3}-\d{4}"
     phone_numbers = re.findall(pattern, text)
     return phone_numbers
 
