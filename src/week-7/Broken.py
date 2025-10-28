@@ -58,6 +58,7 @@ def append_to_file(filename, new_data):
     """
     Append new data to an existing file using 'a' mode.
     """
+    # test_append_to_file_preserves_existing_content() - changed "w" to "a" parameter
     with open(filename, "a") as file_handle:
         file_handle.write(new_data + "\n")
     print(f"Data appended to '{filename}'")
@@ -142,6 +143,7 @@ def get_list_slice(input_list, start, end):
     """
     Returns a slice of the list from start to end index.
     """
+    # [10, 20, 30, 40, 50][1:3] should return [20, 30, 40]
     return input_list[start : end + 1]
 
 
@@ -188,6 +190,7 @@ def demonstrate_tuples():
     print(f"Sorted list of tuples: {people}")
 
     # Sort by specific element (age in this case - using beginner-friendly method)
+    # age is the second element, that's what we sort by
     def get_age(person_tuple):
         return person_tuple[1]
 
@@ -202,6 +205,7 @@ def create_person_tuple(name, age, job):
     Creates a person tuple from individual values.
     Returns tuple in format (name, age, job).
     """
+    # test_create_person_tuple_returns_tuple_type() - changed this from a list to a tuple
     person = (name, age, job)
     return person
 
@@ -298,6 +302,8 @@ def merge_dictionaries(dict1, dict2):
     Merges two dictionaries. If keys overlap, dict2 values should overwrite dict1.
     Returns a new merged dictionary.
     """
+    # test_merge_dictionaries_does_not_modify_original()
+    # create a new merged dictionary that doesn't override dict1 or dict2
     merged = {}
 
     for key, value in dict1.items():
@@ -391,6 +397,8 @@ def extract_phone_numbers(text):
     Extracts all phone numbers in format XXX-XXX-XXXX from text.
     Returns list of phone numbers found.
     """
+    # test_extract_phone_numbers_correct_format()
+    # changed the last part to be 4 digits instead of 3
     pattern = r"\d{3}-\d{3}-\d{4}"
     phone_numbers = re.findall(pattern, text)
     return phone_numbers
