@@ -21,21 +21,25 @@ src/
 ## Topics Covered
 
 ### Week 2: Python Fundamentals
+
 - Review of basic Python concepts (variables, control flow, functions)
 - Code exchange exercises
 - Testing with pytest
 
 ### Week 4: Files and Collections
+
 - File I/O operations (Chapter 7)
 - Lists and list processing (Chapter 8)
 - Calculator implementation with unit tests
 
 ### Week 5: Data Structures
+
 - Dictionaries (Chapter 9)
 - Tuples (Chapter 10)
 - Text file processing and word counting
 
 ### Week 6: Advanced Topics
+
 - Regular expressions (Chapter 11)
 - Network programming and HTTP (Chapter 12)
 - HTML parsing with Beautiful Soup
@@ -43,12 +47,14 @@ src/
 - Web scraping techniques
 
 ### Week 7: Data Formats
+
 - XML parsing and processing (Chapter 13)
 - JSON data extraction
 - GeoJSON data handling
 - Data validation
 
 ### Week 9: Data Analysis
+
 - Jupyter notebooks
 - Pandas data analysis
 - Dataset exploration (Titanic dataset)
@@ -65,17 +71,20 @@ This project uses Python 3.13+ and is managed with [uv](https://github.com/astra
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd SEIS-603
 ```
 
 2. Install dependencies:
+
 ```bash
 uv sync
 ```
 
 3. Activate the virtual environment:
+
 ```bash
 source .venv/bin/activate  # On macOS/Linux
 # or
@@ -95,22 +104,26 @@ Key libraries used in this course:
 ## Running Code
 
 ### Python Scripts
+
 ```bash
 python src/week-4/calculator.py
 ```
 
 ### Jupyter Notebooks
+
 ```bash
-jupyter lab
+uv run --with jupyter jupyter lab
 # Navigate to src/week-9/ and open notebooks
 ```
 
 ### Running Tests
+
 ```bash
 pytest
 ```
 
 ### Code Linting
+
 ```bash
 ruff check .
 ruff format .
