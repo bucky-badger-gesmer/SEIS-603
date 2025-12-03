@@ -1,0 +1,73 @@
+
+# ============================================================
+# LAB: Predict Continent from Time-of-Day Using Pandas + NumPy
+# ============================================================
+
+# STEP 1: Import libraries
+import sqlite3
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.linear_model import LogisticRegression
+
+# STEP 2: Load SQLite database into a pandas DataFrame
+conn = sqlite3.connect("emails.db")
+df = pd.read_sql_query("SELECT sender_ip, country, timestamp FROM email_data", conn)
+conn.close()
+
+# STEP 3: Convert timestamp → hour-of-day
+df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+df["hour"] = df["timestamp"].dt.hour
+
+# STEP 4: Map countries to continents (simple example)
+continent_map = {
+    "United States": "North America",
+    "Canada": "North America",
+    "Mexico": "North America",
+
+    "Brazil": "South America",
+    "Argentina": "South America",
+
+    "United Kingdom": "Europe",
+    "Germany": "Europe",
+    "France": "Europe",
+    "Spain": "Europe",
+
+    "China": "Asia",
+    "Japan": "Asia",
+    "India": "Asia",
+    "Singapore": "Asia",
+
+    "Australia": "Oceania"
+}
+
+df["continent"] = df["country"].map(continent_map)
+
+# STEP 5: Drop rows missing continents or hours
+df = df.dropna(subset=["hour", "continent"])
+
+# STEP 6: Prepare training data
+X = df[["hour"]].values
+y = df["continent"].values
+
+# One-hot encode continent labels
+enc = OneHotEncoder()
+y_enc = enc.fit_transform(y.reshape(-1, 1)).toarray()
+
+# STEP 7: Train logistic regression model
+model = LogisticRegression(max_iter=500)
+model.fit(X, y)
+
+# STEP 8: Make predictions
+test_hours = np.array([[3], [9], [15], [21]])
+preds = model.predict(test_hours)
+
+print("Predicted continents for hours [3, 9, 15, 21]:")
+print(preds)
+
+# STEP 9: Optional confusion matrix
+from sklearn.metrics import confusion_matrix
+y_pred = model.predict(X)
+print("Confusion Matrix:")
+print(confusion_matrix(y, y_pred))

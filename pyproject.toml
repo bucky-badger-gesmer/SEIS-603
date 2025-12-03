@@ -7,8 +7,11 @@ requires-python = ">=3.13.0"
 dependencies = [
     "altair>=5.5.0",
     "beautifulsoup4>=4.14.2",
+    "dnspython>=2.8.0",
+    "folium>=0.20.0",
     "ipykernel>=6.29.5",
     "jupyterlab>=4.4.10",
+    "kagglehub>=0.3.13",
     "matplotlib>=3.10.7",
     "notebook>=7.4.7",
     "numpy>=2.3.4",
