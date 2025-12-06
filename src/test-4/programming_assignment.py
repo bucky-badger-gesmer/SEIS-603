@@ -4,7 +4,12 @@
 
 import re
 import sqlite3
+import time
 from datetime import datetime
+
+import folium
+import pandas as pd
+import requests
 
 
 def parse_apache_log_line(log_line):
@@ -115,5 +120,156 @@ def load_file_to_db():
     conn.close()
 
 
+def geolocate_ip_batch(ip_list, max_retries=3):
+    """Geolocate up to 100 IPs in a single batch request."""
+    BATCH_API_URL = "http://ip-api.com/batch"
+
+    # Build request payload with fields we need
+    payload = [
+        {"query": ip, "fields": "query,status,lat,lon,city,country"}
+        for ip in ip_list
+    ]
+
+    for attempt in range(max_retries):
+        try:
+            response = requests.post(BATCH_API_URL, json=payload, timeout=30)
+
+            if response.status_code == 429:
+                wait_time = 2**attempt * 10
+                print(f"Rate limit hit. Waiting {wait_time}s...")
+                time.sleep(wait_time)
+                continue
+
+            data = response.json()
+            results = {}
+
+            for item in data:
+                ip = item.get("query")
+                if item.get("status") == "success":
+                    results[ip] = {
+                        "lat": item["lat"],
+                        "lon": item["lon"],
+                        "city": item.get("city", "N/A"),
+                        "country": item.get("country", "N/A"),
+                    }
+                else:
+                    results[ip] = None
+
+            return results
+
+        except requests.exceptions.RequestException as e:
+            print(f"Request error: {e}. Retrying...")
+            time.sleep(2**attempt * 5)
+
+    return {}
+
+
+def extract_ip_addresses_and_output_map():
+    OUTPUT_MAP_FILE = "ip_origins_map.html"
+    BATCH_SIZE = 100  # Max IPs per batch request
+    IP_LIMIT = 5000  # Total IPs to process
+
+    conn = sqlite3.connect("web_server_access_logs.sqlite")
+    try:
+        df = pd.read_sql_query(
+            f"SELECT ip_address, COUNT(*) as request_count FROM Logs GROUP BY ip_address ORDER BY request_count DESC LIMIT {IP_LIMIT}",
+            conn,
+        )
+
+        print(f"Processing {len(df)} unique IPs using batch API...")
+
+        ip_locations = {}
+        all_locations_data = []
+
+        # Process IPs in batches of 100
+        ip_list = df["ip_address"].tolist()
+        request_counts = dict(zip(df["ip_address"], df["request_count"]))
+
+        for i in range(0, len(ip_list), BATCH_SIZE):
+            batch = ip_list[i : i + BATCH_SIZE]
+            batch_num = i // BATCH_SIZE + 1
+            total_batches = (len(ip_list) + BATCH_SIZE - 1) // BATCH_SIZE
+
+            print(
+                f"Processing batch {batch_num}/{total_batches} ({len(batch)} IPs)..."
+            )
+
+            batch_results = geolocate_ip_batch(batch)
+            ip_locations.update(batch_results)
+
+            # Add to all_locations_data with request counts
+            for ip, loc_data in batch_results.items():
+                if loc_data:
+                    loc = loc_data.copy()
+                    loc["request_count"] = request_counts[ip]
+                    all_locations_data.append(loc)
+
+            # Rate limit: 15 requests per minute = 4 seconds between batches
+            if i + BATCH_SIZE < len(ip_list):
+                time.sleep(4)
+
+        # Generate map
+        if not all_locations_data:
+            print("No valid IPs found.")
+            return
+
+        # Aggregate request counts by location
+        location_requests = {}
+        for loc in all_locations_data:
+            key = (loc["lat"], loc["lon"])
+            if key not in location_requests:
+                location_requests[key] = {
+                    "city": loc["city"],
+                    "country": loc["country"],
+                    "total_requests": 0,
+                }
+            location_requests[key]["total_requests"] += loc["request_count"]
+
+        max_requests = max(
+            info["total_requests"] for info in location_requests.values()
+        )
+
+        m = folium.Map(location=[20, 0], zoom_start=2)
+
+        for (lat, lon), info in location_requests.items():
+            city = info["city"]
+            country = info["country"]
+            total_requests = info["total_requests"]
+
+            radius = 5 + (total_requests * 20 / max_requests)
+
+            popup_html = f"""
+                <strong>Location:</strong> {city}, {country}<br>
+                <strong>Requests:</strong> {total_requests}<br>
+                <strong>Coordinates:</strong> {lat:.4f}, {lon:.4f}
+            """
+
+            folium.CircleMarker(
+                location=[lat, lon],
+                radius=radius,
+                popup=popup_html,
+                color="#E53935",
+                fill=True,
+                fill_color="#FF5722",
+                fill_opacity=0.7,
+            ).add_to(m)
+
+        m.save(OUTPUT_MAP_FILE)
+        print(f"Map saved to: {OUTPUT_MAP_FILE}")
+
+    finally:
+        conn.close()
+
+
+def create_data_visualizations():
+    pass
+
+
 if __name__ == "__main__":
-    load_file_to_db()
+    # load_file_to_db()
+
+    # This method will take a bit to process. It will process 5000 ip_addresses in batches of 100.
+    # Uncomment if you want to run it yourself!
+    # extract_ip_addresses_and_output_map()
+
+    create_data_visualizations()
