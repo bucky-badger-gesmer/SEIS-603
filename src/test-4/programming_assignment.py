@@ -1,13 +1,10 @@
-# 1. Put access.log.txt into a sqlite db
-# 2. Extract data from db and make a website geographic viz
-# 3. Read db into a pandas df and make 4 vizzes
-
 import re
 import sqlite3
 import time
 from datetime import datetime
 
 import folium
+import matplotlib.pyplot as plt
 import pandas as pd
 import requests
 
@@ -262,11 +259,181 @@ def extract_ip_addresses_and_output_map():
 
 
 def create_data_visualizations():
-    pass
+    create_bar_graph_requests_per_day()
+    create_bar_graph_response_status_codes()
+    create_bar_graph_http_method()
+    create_pie_chart_user_agent()
+    create_pie_chart_protocol_version()
+
+
+def create_bar_graph_requests_per_day():
+    conn = sqlite3.connect("web_server_access_logs.sqlite")
+    df = pd.read_sql_query("SELECT * FROM Logs", conn)
+    conn.close()
+
+    # Convert timestamp to datetime and extract date
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df["date"] = df["timestamp"].dt.date
+
+    # Count requests per date
+    requests_per_day = df.groupby("date").size()
+
+    plt.figure(figsize=(15, 10))
+    plt.bar(requests_per_day.index, requests_per_day.values, width=0.8)
+    plt.xlabel("Date")
+    plt.ylabel("Number of Requests")
+    plt.title("Web Server Requests Per Day")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig("bar_graph_requests_per_day.png")
+    plt.close()
+
+    print("Graph saved to bar_graph_requests_per_day.png")
+
+
+def create_bar_graph_response_status_codes():
+    conn = sqlite3.connect("web_server_access_logs.sqlite")
+    df = pd.read_sql_query("SELECT status_code FROM Logs", conn)
+    conn.close()
+
+    status_counts = (
+        df["status_code"].value_counts().sort_values(ascending=True)
+    )
+
+    plt.figure(figsize=(15, 10))
+    bars = plt.barh(status_counts.index.astype(str), status_counts.values)
+    plt.ylabel("Status Code")
+    plt.xlabel("Number of Requests")
+    plt.title("HTTP Response Status Codes")
+
+    for bar, value in zip(bars, status_counts.values):
+        plt.text(
+            value,
+            bar.get_y() + bar.get_height() / 2,
+            f" {value:,}",
+            va="center",
+        )
+
+    plt.tight_layout()
+    plt.savefig("bar_graph_status_codes.png")
+    plt.close()
+
+    print("Graph saved to bar_graph_status_codes.png")
+
+
+def create_bar_graph_http_method():
+    conn = sqlite3.connect("web_server_access_logs.sqlite")
+    df = pd.read_sql_query("SELECT http_method FROM Logs", conn)
+    conn.close()
+
+    method_counts = (
+        df["http_method"].value_counts().sort_values(ascending=True)
+    )
+
+    plt.figure(figsize=(15, 10))
+    bars = plt.barh(method_counts.index, method_counts.values)
+    plt.ylabel("HTTP Method")
+    plt.xlabel("Number of Requests")
+    plt.title("HTTP Request Methods")
+
+    for bar, value in zip(bars, method_counts.values):
+        plt.text(
+            value,
+            bar.get_y() + bar.get_height() / 2,
+            f" {value:,}",
+            va="center",
+        )
+
+    plt.tight_layout()
+    plt.savefig("bar_graph_http_methods.png")
+    plt.close()
+
+    print("Graph saved to bar_graph_http_methods.png")
+
+
+def create_pie_chart_user_agent():
+    conn = sqlite3.connect("web_server_access_logs.sqlite")
+    df = pd.read_sql_query("SELECT user_agent FROM Logs", conn)
+    conn.close()
+
+    # Categorize user agents into Mozilla, Googlebot, or Other
+    def categorize_user_agent(ua):
+        if ua and ua.startswith("Mozilla"):
+            return "Mozilla"
+        elif ua and "Google" in ua:
+            return "Google"
+        # elif ua and "Baiduspider" in ua:
+        #     return "Baidu"
+        # elif ua and "Jakarta" in ua:
+        #     return "Jakarta"
+        # elif ua and "Wordpress" in ua:
+        #     return "Wordpress"
+        else:
+            return "Other"
+
+    df["category"] = df["user_agent"].apply(categorize_user_agent)
+
+    # Count categories
+    category_counts = df["category"].value_counts()
+
+    # Create pie chart with legend instead of labels on slices
+    plt.figure(figsize=(12, 12))
+    wedges, texts, autotexts = plt.pie(
+        category_counts.values,
+        autopct="%1.1f%%",
+        startangle=90,
+        pctdistance=0.75,
+    )
+    plt.legend(
+        wedges,
+        category_counts.index,
+        title="User Agent",
+        loc="center left",
+        bbox_to_anchor=(1, 0.5),
+    )
+    plt.title("User Agent Distribution")
+    plt.tight_layout()
+    plt.savefig("pie_chart_user_agents.png")
+    plt.close()
+
+    print("Graph saved to pie_chart_user_agents.png")
+
+
+def create_pie_chart_protocol_version():
+    conn = sqlite3.connect("web_server_access_logs.sqlite")
+    df = pd.read_sql_query("SELECT protocol_version FROM Logs", conn)
+    conn.close()
+
+    # Categorize protocol versions into HTTP/1.0, HTTP/1.1, or Other
+    def categorize_protocol(pv):
+        if pv == "HTTP/1.0":
+            return "HTTP/1.0"
+        elif pv == "HTTP/1.1":
+            return "HTTP/1.1"
+        else:
+            return "Other"
+
+    df["category"] = df["protocol_version"].apply(categorize_protocol)
+
+    protocol_counts = df["category"].value_counts()
+
+    plt.figure(figsize=(12, 12))
+    plt.pie(
+        protocol_counts.values,
+        labels=protocol_counts.index,
+        autopct="%1.1f%%",
+        startangle=90,
+    )
+    plt.title("HTTP Protocol Version Distribution")
+    plt.tight_layout()
+    plt.savefig("pie_chart_protocol_versions.png")
+    plt.close()
+
+    print("Graph saved to pie_chart_protocol_versions.png")
 
 
 if __name__ == "__main__":
-    # load_file_to_db()
+    load_file_to_db()
 
     # This method will take a bit to process. It will process 5000 ip_addresses in batches of 100.
     # Uncomment if you want to run it yourself!
